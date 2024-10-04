@@ -30,7 +30,7 @@ function AgentHomePage() {
         <button>View All Agents</button>
       </Link>
       <Link to="/students">
-        <button>View All Students</button>
+        <button>View student</button>
       </Link>
 
     </div>
