@@ -4,14 +4,15 @@ import styles from './SeeAllUniversities.module.css'; // Import CSS module
 
 function SeeAllUniversities() {
     const [universities, setUniversities] = useState([]);
+    const [searchTerm, setSearchTerm] = useState(''); // State for search term
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/universities')
+        fetch(`http://localhost:5000/api/universities?search=${searchTerm}`) // Fetch with search term
             .then(response => response.json())
             .then(data => setUniversities(data))
             .catch(error => console.error('Error:', error));
-    }, []);
+    }, [searchTerm]); // Refetch universities whenever the search term changes
 
     const handleUserClick = (id) => {
         navigate(`/agents/${id}`);
@@ -19,12 +20,31 @@ function SeeAllUniversities() {
 
     return (
         <div className={styles.universitiesPage}>
-            <h1>All Universities</h1>
+            <h1 className={styles.title}>All Universities</h1>
+            <input
+                type="text"
+                placeholder="Search universities..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
+                className={styles.searchInput} // Optional: Add a class for styling
+            />
             <ul className={styles.universityList}>
                 {universities.map(university => (
                     <li key={university._id} className={styles.universityCard}>
                         <h2 className={styles.universityName}>{university.universityName}</h2>
-                        <p className={styles.universityLocation}>{university.country}, {university.city}</p>
+
+                        {/* Display university image if available */}
+                        {university.image && (
+                            <img 
+                                src={university.image} // Use the full image URL returned by the backend
+                                alt={`${university.universityName}`} 
+                                className={styles.universityImage} // Add class for image styling
+                            />
+                        )}
+
+                        <p className={styles.universityLocation}>
+                            {university.country}, {university.city}
+                        </p>
                         <p>
                             <strong>Website:</strong> 
                             <a href={university.websiteURL} target="_blank" rel="noopener noreferrer">

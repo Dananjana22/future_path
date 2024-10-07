@@ -8,6 +8,7 @@ const universitySchema = new mongoose.Schema({
     availablePrograms: { type: String, required: true },
     admissionRequirements: { type: String, required: true },
     establishedYear: { type: Number, required: false, min: 1000, max: 2100 },
+    image: { type: String, required: false }, // Path to the uploaded image
     addedBy: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 

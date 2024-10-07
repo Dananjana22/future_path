@@ -6,6 +6,8 @@ function UpdateJob() {
   const [job, setJob] = useState(null); // State to hold job data
   const [loading, setLoading] = useState(true); // State to handle loading
   const [error, setError] = useState(null); // State to handle errors
+  const [image, setImage] = useState(null); // State to handle the uploaded image
+  const [preview, setPreview] = useState(null); // State to preview the selected image
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,12 +17,12 @@ function UpdateJob() {
         const response = await fetch(`http://localhost:5000/api/jobs/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
           },
         });
         if (!response.ok) throw new Error('Failed to fetch job details');
         const data = await response.json();
         setJob(data);
+        setPreview(data.image); // Set the current image as preview
       } catch (error) {
         setError(error.message);
       } finally {
@@ -31,17 +33,46 @@ function UpdateJob() {
     fetchJob();
   }, [id]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+
+    // Preview the image before uploading
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+    
+    // Create a new FormData object
+    const formData = new FormData();
+    formData.append('jobTitle', job.jobTitle);
+    formData.append('companyName', job.companyName);
+    formData.append('location', job.location);
+    formData.append('employmentType', job.employmentType);
+    formData.append('salaryRange', job.salaryRange);
+    formData.append('jobDescription', job.jobDescription);
+    formData.append('requirements', job.requirements);
+    formData.append('applicationDeadline', job.applicationDeadline);
+    formData.append('websiteURL', job.websiteURL);
+    
+    // Append the image if a new one is uploaded
+    if (image) {
+      formData.append('image', image);
+    }
+
     try {
       const response = await fetch(`http://localhost:5000/api/jobs/${id}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Token for authorization
         },
-        body: JSON.stringify(job),
+        body: formData, // Send formData with text fields and image
       });
 
       if (response.ok) {
@@ -61,7 +92,7 @@ function UpdateJob() {
   return (
     <div>
       <h1>Update Job</h1>
-      <form onSubmit={handleUpdate}>
+      <form onSubmit={handleUpdate} encType="multipart/form-data">
         <input
           type="text"
           placeholder="Job Title"
@@ -120,6 +151,22 @@ function UpdateJob() {
           value={job?.websiteURL || ''}
           onChange={(e) => setJob({ ...job, websiteURL: e.target.value })}
         />
+        
+        {/* File input for image upload */}
+        <input 
+          type="file" 
+          name="image" 
+          accept="image/*" 
+          onChange={handleImageChange} 
+        />
+        
+        {/* Image preview */}
+        {preview && (
+          <div>
+            <img src={preview} alt="Job Preview" style={{ width: '200px', height: 'auto' }} />
+          </div>
+        )}
+
         <button type="submit">Update Job</button>
       </form>
     </div>

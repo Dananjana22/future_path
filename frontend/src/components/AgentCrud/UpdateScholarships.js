@@ -143,6 +143,14 @@ function UpdateScholarships() {
                         <p><strong>Field of Study:</strong> {scholarship.fieldOfStudy}</p>
                         <p><strong>Country:</strong> {scholarship.country}</p>
                         <p><strong>Application Requirements:</strong> {scholarship.applicationRequirements}</p>
+
+                        {/* Display scholarship image if available */}
+                        {scholarship.image && (
+                            <div>
+                                <img src={scholarship.image} alt="Scholarship" style={{ width: '200px', height: 'auto' }} />
+                            </div>
+                        )}
+
                         <button onClick={() => handleDelete(scholarship._id)}>Delete</button>
                         <button onClick={() => window.location.href = `/update-scholarship/${scholarship._id}`}>Update</button>
                     </li>

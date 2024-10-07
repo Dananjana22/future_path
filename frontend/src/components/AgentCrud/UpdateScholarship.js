@@ -6,6 +6,8 @@ function UpdateScholarship() {
     const [scholarship, setScholarship] = useState(null); // State to hold scholarship data
     const [loading, setLoading] = useState(true); // State to handle loading
     const [error, setError] = useState(null); // State to handle errors
+    const [image, setImage] = useState(null); // State to handle the uploaded image
+    const [preview, setPreview] = useState(null); // State to preview the selected image
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -15,12 +17,12 @@ function UpdateScholarship() {
                 const response = await fetch(`http://localhost:5000/api/scholarships/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
+                    },
                 });
                 if (!response.ok) throw new Error('Failed to fetch scholarship details');
                 const data = await response.json();
                 setScholarship(data);
+                setPreview(data.image); // Set the current image as preview
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -31,17 +33,47 @@ function UpdateScholarship() {
         fetchScholarship();
     }, [id]);
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        setImage(file);
+
+        // Preview the image before uploading
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
+
     const handleUpdate = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
+        
+        // Create a new FormData object
+        const formData = new FormData();
+        formData.append('scholarshipTitle', scholarship.scholarshipTitle);
+        formData.append('organization', scholarship.organization);
+        formData.append('applicationDeadline', scholarship.applicationDeadline);
+        formData.append('eligibilityCriteria', scholarship.eligibilityCriteria);
+        formData.append('applicationLink', scholarship.applicationLink);
+        formData.append('description', scholarship.description);
+        formData.append('scholarshipType', scholarship.scholarshipType);
+        formData.append('fieldOfStudy', scholarship.fieldOfStudy);
+        formData.append('country', scholarship.country);
+        formData.append('applicationRequirements', scholarship.applicationRequirements);
+        
+        // Append the image if a new one is uploaded
+        if (image) {
+            formData.append('image', image);
+        }
+
         try {
             const response = await fetch(`http://localhost:5000/api/scholarships/${id}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Authorization': `Bearer ${token}`, // Token for authorization
                 },
-                body: JSON.stringify(scholarship),
+                body: formData, // Send formData with text fields and image
             });
 
             if (response.ok) {
@@ -61,7 +93,7 @@ function UpdateScholarship() {
     return (
         <div>
             <h1>Update Scholarship</h1>
-            <form onSubmit={handleUpdate}>
+            <form onSubmit={handleUpdate} encType="multipart/form-data">
                 <input
                     type="text"
                     placeholder="Scholarship Title"
@@ -130,6 +162,22 @@ function UpdateScholarship() {
                     onChange={(e) => setScholarship({ ...scholarship, applicationRequirements: e.target.value })}
                     required
                 />
+                
+                {/* File input for image upload */}
+                <input 
+                    type="file" 
+                    name="image" 
+                    accept="image/*" 
+                    onChange={handleImageChange} 
+                />
+                
+                {/* Image preview */}
+                {preview && (
+                    <div>
+                        <img src={preview} alt="Scholarship Preview" style={{ width: '200px', height: 'auto' }} />
+                    </div>
+                )}
+
                 <button type="submit">Update Scholarship</button>
             </form>
         </div>

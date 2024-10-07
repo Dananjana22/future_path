@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './index.css'; // Import Tailwind CSS here
 import PreLoginPage from './components/PreLoginPage';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
@@ -35,6 +36,7 @@ import PaymentsPage from './components/StudentView/PaymentsPage';
 import AgentPaymentsPage  from './components/AgentView/AgentPaymentsPage.js';
 import AgentProfiles from './components/AgentProfiles';
 import StudentProfiles from './components/StudentProfiles';
+import Home from './components/Home.js';
 
 
 
@@ -80,6 +82,7 @@ function App() {
         <Route path="/agent/payments" element={<AgentPaymentsPage />} />
         <Route path="/agents" element={<AgentProfiles />} />
         <Route path="/students" element={<StudentProfiles />} />
+        <Route path="/home" element={<Home />} />
       </Routes>
     </Router>
   );

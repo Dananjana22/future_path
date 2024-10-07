@@ -5,10 +5,11 @@ import logo from '../../images/future_path_logo.png'; // Adjust path to your log
 function UpdateJobs() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch('http://localhost:5000/api/jobs', {
+    fetch(`http://localhost:5000/api/jobs?search=${searchTerm}`, { // Include search term in the fetch request
       headers: {
         'Authorization': `Bearer ${token}`,
       },
@@ -26,7 +27,7 @@ function UpdateJobs() {
         console.error('Error fetching jobs:', error);
         setError(error.message);
       });
-  }, []);
+  }, [searchTerm]); // Refetch jobs when search term changes
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
@@ -112,6 +113,14 @@ function UpdateJobs() {
       <h1>Your Jobs</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
+      {/* Search Input */}
+      <input 
+        type="text" 
+        value={searchTerm} 
+        onChange={(e) => setSearchTerm(e.target.value)} 
+        placeholder="Search jobs..." 
+      />
+
       <button onClick={generatePDF}>Download Jobs as PDF</button>
 
       <ul>
@@ -126,6 +135,14 @@ function UpdateJobs() {
             <p><strong>Requirements:</strong> {job.requirements}</p>
             <p><strong>Application Deadline:</strong> {new Date(job.applicationDeadline).toLocaleDateString()}</p>
             <p><strong>Website:</strong> <a href={job.websiteURL} target="_blank" rel="noopener noreferrer">{job.websiteURL}</a></p>
+
+            {/* Display job image if available */}
+            {job.image && (
+              <div>
+                <img src={job.image} alt="Job" style={{ width: '200px', height: 'auto' }} />
+              </div>
+            )}
+
             <button onClick={() => handleDelete(job._id)}>Delete</button>
             <button onClick={() => window.location.href = `/update-job/${job._id}`}>Update</button>
           </li>

@@ -33,6 +33,20 @@ function AgentHomePage() {
         <button>View student</button>
       </Link>
 
+      <Link to="/login">
+        <button>Login</button> </Link>
+
+      <Link to="/register">
+        <button>Register</button>
+
+      </Link>
+
+      <Link to="/register">
+        <button>Register123</button>
+
+      </Link>
+
+
     </div>
   );
 }

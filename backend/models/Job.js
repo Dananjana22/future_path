@@ -10,6 +10,7 @@ const jobSchema = new mongoose.Schema({
     requirements: { type: String, required: true },
     applicationDeadline: { type: Date, required: false },
     websiteURL: { type: String, required: false }, // for applying or more info
+    image: { type: String, required: false }, // Path to the uploaded image
     addedBy: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 

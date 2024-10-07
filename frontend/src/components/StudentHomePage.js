@@ -19,6 +19,7 @@ function StudentHomePage() {
       <button onClick={() => navigate('/payments')}>View My Payments</button> 
       <button onClick={() => navigate('/agents')}>View Agents</button> 
       <button onClick={() => navigate('/students')}>View Students</button> 
+      <button onClick={() => navigate('/login')}>Login</button> 
     </div>
   );
 }

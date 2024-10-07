@@ -23,7 +23,7 @@ function LoginPage() {
         if (data.userType === 'agent') {
           navigate('/agent-home');
         } else if (data.userType === 'student') {
-          navigate('/student-home');
+          navigate('/home');
         }
       } else {
         alert('Login failed');

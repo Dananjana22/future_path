@@ -11,6 +11,7 @@ const scholarshipSchema = new mongoose.Schema({
     fieldOfStudy: { type: String, required: true },
     country: { type: String, required: true },
     applicationRequirements: { type: String, required: true },
+    image: { type: String }, // Field for storing the image URL or path
     addedBy: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 

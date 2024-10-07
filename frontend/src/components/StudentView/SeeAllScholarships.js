@@ -29,6 +29,14 @@ function SeeAllScholarships() {
                     <li key={scholarship._id} className={styles.scholarshipCard} onClick={() => handleScholarshipClick(scholarship._id)}>
                         <h2 className={styles.scholarshipTitle}>{scholarship.scholarshipTitle}</h2>
                         <div className={styles.scholarshipDetails}>
+                            {/* Display scholarship image if available */}
+                            {scholarship.image && (
+                                <img 
+                                    src={scholarship.image} // Use the full image URL returned by the backend
+                                    alt={`Scholarship: ${scholarship.scholarshipTitle}`} 
+                                    className={styles.scholarshipImage} // Add class for image styling
+                                />
+                            )}
                             <p><strong>Organization:</strong> {scholarship.organization}</p>
                             <p><strong>Application Deadline:</strong> {new Date(scholarship.applicationDeadline).toLocaleDateString()}</p>
                             <p><strong>Eligibility Criteria:</strong> {scholarship.eligibilityCriteria}</p>
